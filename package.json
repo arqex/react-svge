@@ -15,5 +15,8 @@
     "export"
   ],
   "author": "Javier Marquez",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "freezer-js": "^0.9.4"
+  }
 }
