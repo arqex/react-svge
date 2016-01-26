@@ -1,0 +1,19 @@
+{
+  "name": "react-svge",
+  "version": "1.0.0",
+  "description": "0.0.1",
+  "main": "SvgEditor.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "svg",
+    "editor",
+    "react",
+    "image",
+    "import",
+    "export"
+  ],
+  "author": "Javier Marquez",
+  "license": "MIT"
+}
