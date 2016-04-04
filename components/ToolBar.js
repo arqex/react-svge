@@ -20,8 +20,9 @@ var ToolBar = React.createClass({
 		return className;
 	},
 	selectMode: function( mode ){
+		var me = this;
 		return function(){
-			this.props.source.get().set({mode: mode});			
+			me.props.source.get().set({mode: mode});			
 		}
 	}
 });
