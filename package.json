@@ -17,6 +17,6 @@
   "author": "Javier Marquez",
   "license": "MIT",
   "dependencies": {
-    "freezer-js": "^0.9.4"
+    "freezer-js": "^0.11.0"
   }
 }

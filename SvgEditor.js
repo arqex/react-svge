@@ -8,44 +8,61 @@ var React = require('react'),
 ;
 
 var SvgEditor = React.createClass({
-	getInitialState: function() {
-		window.fstore = new Freezer({
-			canvas: {
-				type: 'canvas',
-				elements: [],
-				width: this.props.width || 500,
-				height: this.props.height || 500
-			},
-			dataElements: [],
-			selected: []
-		}, {live:true});
+	statics: {
+		createSourceData: function( svgFile ){
+			if( svgFile ){
+				console.warn('Parsing svg files not implemented');
+			}
 
-		this.switchingMode = false;
-
-		pathReactions( fstore );
-		selectReactions( fstore );
-
-		return fstore;
+			return new Freezer({
+				canvas: {
+					type: 'canvas',
+					elements: [],
+					width: 600,
+					height: 500
+				},
+				dataElements: [],
+				selected: [],
+				mode: 'path'
+			}, {live:true})
+		}
+	},
+	componentWillMount: function(){
+		pathReactions( this.props.source );
+		selectReactions( this.props.source );
+	},
+	getDefaultProps: function(){
+		// If we don't get any source data create an empty one
+		var source = this.createSourceData();
+		source.get().set({localSource: true});
+		return {
+			source: source
+		};
 	},
 	render: function() {
-		var C = this.getModeComponent( this.props.mode ),
-			state = this.state.get()
+		var	state = this.props.source.get(),
+			C = this.getModeComponent( state.mode ),
+			hub = this.props.source.getEventHub()
 		;
 
 		return (
 			<div className="svgCanvas unselectable"
-				unselectable style={{position:'relative', height: this.state.get().canvas.height}}
+				unselectable style={{position:'relative', height: state.canvas.height || 500 }}
 				onDragOver={ (e) => e.preventDefault() }
 				onDrop={ this.loadFile }>
-					<SvgCanvas canvas={ state.canvas } hub={ this.state }  />
-					<C ref="mode" data={ state } hub={ this.state } />
+					<SvgCanvas canvas={ state.canvas } hub={ hub }  />
+					<C ref="mode" data={ state } hub={ hub } />
 			</div>
 		)
 	},
 	componentDidMount: function() {
 		var me = this;
-		this.state.on('update', function(){
-			me.forceUpdate();
+		this.props.source.on('update', function( source ){
+			me.props.onChange && me.props.onChange( source );
+			if( me.props.source.get().localSource ){
+				// if we didn't get any source via props, update on change
+				me.forceUpdate();
+			}
 		})
 	},
 	getModeComponent: function( mode ){
@@ -62,9 +79,9 @@ var SvgEditor = React.createClass({
 			if( current && current.beforeOut )
 				current.beforeOut();
 			if( next && next.beforeIn )
-				next.beforeIn( this.state.get() );
+				next.beforeIn( this.props.source.get() );
 
-			this.state.trigger('mode:updated', nextProps.mode);
+			this.props.source.trigger('mode:updated', nextProps.mode);
 		}
 	},
 	loadFile: function( e ){
@@ -85,16 +102,6 @@ var SvgEditor = React.createClass({
 		Array.prototype.forEach.call( svg.querySelectorAll('path'), path => {
 
 		});
-	},
-	trigger: function(){
-		this.state.trigger.apply( this.state, arguments );
-	},
-	getHub: function(){
-		var hub = {};
-		['on','once','off','trigger'].forEach( method => {
-			hub[method] = this.state[method].bind( this.state );
-		});
-		return hub;
 	}
 });
 

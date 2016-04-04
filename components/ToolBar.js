@@ -1,11 +1,6 @@
 var React = require('react');
 
 var ToolBar = React.createClass({
-	getDefaultProps: function(){
-		return {
-			onSelectMode: function(){}
-		}
-	},
 	render: function() {
 		return (
 			<div className="toolbar">
@@ -15,15 +10,18 @@ var ToolBar = React.createClass({
 		);
 	},
 	getButtonClass: function(mode){
-		var className = 'tbButton';
-		if( mode == this.props.mode )
+		var className = 'tbButton',
+			current = this.props.source.get().mode
+		;
+
+		if( mode == current )
 			className += ' tbSelected';
+
 		return className;
 	},
 	selectMode: function( mode ){
-		var me = this;
 		return function(){
-			me.props.onSelectMode( mode );
+			this.props.source.get().set({mode: mode});			
 		}
 	}
 });

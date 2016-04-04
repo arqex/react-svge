@@ -1,11 +1,11 @@
 var kb = require('keyboardjs');
 
 module.exports = {
-  startHistory: function( editorInstance ){
+  startHistory: function( source ){
     var past = [],
       present = false,
       future = [],
-      hub = editorInstance.getHub()
+      hub = source.getEventHub()
     ;
 
     hub.on('history:push', function( state ){
@@ -22,7 +22,7 @@ module.exports = {
       if( past.length ){
         future.unshift( present );
         present = past.pop();
-        this.set( present );
+        source.set( present );
       }
     });
 
@@ -30,7 +30,7 @@ module.exports = {
       if( future.length ){
         past.push( present );
         present = future.shift();
-        this.set( present );
+        source.set( present );
       }
     });
 
